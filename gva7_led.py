@@ -32,12 +32,12 @@ rled = LED(25)
 mixer.pre_init(frequency=24000, buffer=2048) 
 mixer.init()
 
-# add your Google Gemini API key here
-my_api_key = " "
+# Read Google Gemini API key from environment variable
+my_api_key = os.environ.get("GEMINI_API_KEY", "")
 
 if len(my_api_key) < 5:
-    print(f"Please add your Google Gemini API key in the program. \n " )
-    quit() 
+    print("Please set the GEMINI_API_KEY environment variable.\n")
+    quit()
 
 # set Google Gemini API key as a system environment variable or add it here
 genai.configure(api_key= my_api_key)
