@@ -237,7 +237,8 @@ def main():
     global today, slang, numtext, numtts, numaudio, messages, rled, gled
     
     rec = sr.Recognizer()
-    mic = sr.Microphone()
+    mic = sr.Microphone(device_index=1)
+
     
     rec.energy_threshold = 4000    
   

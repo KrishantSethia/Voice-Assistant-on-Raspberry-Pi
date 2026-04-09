@@ -43,7 +43,7 @@ if len(my_api_key) < 5:
 genai.configure(api_key= my_api_key)
 
 # model of Google Gemini API
-model = genai.GenerativeModel('gemini-pro',
+model = genai.GenerativeModel('gemini-2.0-flash',
     generation_config=genai.GenerationConfig(
         candidate_count=1,
         top_p = 0.95,
@@ -67,7 +67,13 @@ numaudio = 0
 def chatfun(request, text_queue, llm_done, stop_event):
     global numtext, chat
     
-    response = chat.send_message(request, stream=True)
+    try:
+        response = chat.send_message(request, stream=True)
+    except Exception as e:
+        print(f"[LLM error] {type(e).__name__}: {e}")
+        llm_done.set()
+        stop_event.set()
+        return
  
     # response.resolve() # waits for the completion of streaming response.
     
@@ -234,7 +240,7 @@ def main():
     global today, slang, numtext, numtts, numaudio, messages, rled, gled
     
     rec = sr.Recognizer()
-    mic = sr.Microphone()
+    mic = sr.Microphone(device_index=1)  # PulseAudio (Bluetooth)
     
     rec.dynamic_energy_threshold=False
     rec.energy_threshold = 400   
@@ -285,9 +291,9 @@ def main():
                             #append2log(f"AI: Hi, there, how can I help? \n")
                             continue                      
  
-                    # if user did not say the wake word, nothing will happen 
+                    # if user did not say the wake word, nothing will happen
                     else:
-                        #print(f"Please start the conversation with the wake word. \n " )
+                        print("(asleep) Say the wake word 'Jack' to start, e.g. 'Jack, hello'.\n")
                         continue
                       
                 # AI is awake         
@@ -362,8 +368,15 @@ def main():
  
                 print('\n')
  
+            except sr.WaitTimeoutError:
+                print("(timeout: no speech detected)")
+                continue
+            except sr.UnknownValueError:
+                print("(could not understand audio)")
+                continue
             except Exception as e:
-                continue 
+                print(f"[error] {type(e).__name__}: {e}")
+                continue
  
 if __name__ == "__main__":
     main()
