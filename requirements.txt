@@ -4,3 +4,4 @@ pygame
 SpeechRecognition
 sounddevice
 gpiozero
+python-dotenv

@@ -16,6 +16,9 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import google.generativeai as genai
 from gtts import gTTS
 from gpiozero import LED
